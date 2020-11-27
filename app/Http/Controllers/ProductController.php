@@ -17,58 +17,46 @@ class ProductController extends BaseController {
         //     $countallproduct = count($product);
         //     if ($countallproduct > 0) {
         //         return response()->json(array(
+        //                     'status'=> 'success',
         //                     'code' => 200,
         //                     'data' => $product
         //                         ), 200);
         //     }
         // }
-        $product = Product::all();
-        return Response([
-            'status'=> 'success',
-            'code' => 200,
-            'data' => $product
-        ]);
+
+        // $product = DB::table('Product')->get(); 
+        $product= Product::all();
+
+        // // $product = Product::latest()->get();
+        //  $product->transform(function($transform, $key){
+        //     // $transform->location = "Kuala Lumpur";
+            return Response([
+                'status'=> 'success',
+                'code' => 200,
+                'data' => $product
+            ]);
+        //     // return $transform;
+        // });
+        // $product->all();
+      
     }
 
+
     public function create(Request $request) {
-        $product = new Product;
-        $product->name = $request->name;
-        $product->type = $request->type;
-        $product->rate = $request->rate;
-        $product->description = $request->description;
-        $product->picture = $request->picture;
-        $product->color = $request->color;
-        $product->price = $request->price;
-        $product->sale_price = $request->sale_price;
-        $product->promotion = $request->promotion;
-        $product->quantity = $request->quantity;
-        $product->product_detail = $request->product_detail;
-        $product->pay_detail = $request->pay_detail;
-        $product->policy_detail = $request->policy_detail;
-        $product->deleted = $request->deleted;
-        $product->created_at = $request->created_at;
-        $product->created_by = $request->created_by;
-        $product->updated_at = $request->updated_at;
-        $product->updated_by = $request->updated_by;
-        $product->deleted_at = $request->deleted_at;
-        $product->deleted_by = $request->deleted_by;
-        $datainsert = $product->save();
-        if ($datainsert == 1) {
-            $lastid = DB::getPdo()->lastInsertId();
-            $product_inserted = DB::select('select * from product where id = ?', [$lastid]);
-            return response()->json(array(
-                        'code' => 200,
-                        'status' => 'Add has been success',
-                        // 'data' => $product_inserted
-                            ), 200);
-        }
-        // $product = new product();
+        // $product = new Product;
         // $product->name = $request->name;
+        // $product->type = $request->type;
+        // $product->rate = $request->rate;
         // $product->description = $request->description;
-        // $product->keyword = $request->keyword;
-        // $product->icon = $request->icon;
-        // $product->favicon = $request->favicon;
-        // $product->is_active = $request->is_active;
+        // $product->picture = $request->picture;
+        // $product->color = $request->color;
+        // $product->price = $request->price;
+        // $product->sale_price = $request->sale_price;
+        // $product->promotion = $request->promotion;
+        // $product->quantity = $request->quantity;
+        // $product->product_detail = $request->product_detail;
+        // // $product->pay_detail = $request->pay_detail;
+        // $product->policy_detail = $request->policy_detail;
         // $product->deleted = $request->deleted;
         // $product->created_at = $request->created_at;
         // $product->created_by = $request->created_by;
@@ -77,12 +65,43 @@ class ProductController extends BaseController {
         // $product->deleted_at = $request->deleted_at;
         // $product->deleted_by = $request->deleted_by;
         // $product->save();
-        // return Response([
-        //     'status'=> 'success',
-        //     'code' => 200,
-        //     'data' => 'Data has been added success'
+        // if ($datainsert == 1) {
+        //     $lastid = DB::getPdo()->lastInsertId();
+        //     $product_inserted = DB::select('select * from product where id = ?', [$lastid]);
+            //  return response()->json(array(
+            //             'code' => 200,
+            //             'status' => 'Add has been success',
+            //             // 'data' => $product_inserted
+            //                 ), 200);
+             Product::create($request->all());
+
+            return response()->json(['status' => 'Add has been success']);
+
+        //}      
+        // DB::table('product')->insert([
+        //     'name'=> $request->name,
+        // 'type' => $request->type,
+        // 'rate' => $request->rate,
+        // 'description' => $request->description,
+        // 'picture' => $request->picture,
+        // 'color' => $request->color,
+        // 'price' => $request->price,
+        // 'sale_price' => $request->sale_price,
+        // 'promotion' => $request->promotion,
+        // 'quantity' => $request->quantity,
+        // 'product_detail' => $request->product_detail,
+        // 'pay_detail' => $request->pay_detail,
+        // 'policy_detail' => $request->policy_detail,
+        // 'deleted' => $request->deleted,
+        // 'created_at' => $request->created_at,
+        // 'created_by' => $request->created_by,
+        // 'updated_at' => $request->updated_at,
+        // 'updated_by' => $request->updated_by,
+        // 'deleted_at' => $request->deleted_at,
+        // 'deleted_by' => $request->deleted_by
         // ]);
     }
+
 
     public function show($id) {
         $product = Product::find($id);
@@ -101,7 +120,25 @@ class ProductController extends BaseController {
             }
         }
     }
+    public function show1(Product $product)
+    {
+        return $product;
+    }
+    public function update1(Request $request, Product $product)
+    {
+        return $product->update($request->all());
+    }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param Product $product
+     * @throws \Exception
+     */
+    public function destroy(Product $product)
+    {
+        $product->delete();
+    }
     public function update(Request $request, $id) {
         $product = Product::find($id);
         $prod_data = DB::select('select * from product where id = ?', [$id]);
@@ -109,20 +146,6 @@ class ProductController extends BaseController {
             $arr = array('code' => 404, 'message' => 'ID not found or invalid');
             echo json_encode($arr);
         } else {
-            
-            // $product->name = $request->input('name');
-            // $product->description = $request->input('description');
-            // $product->keyword = $request->input('keyword');
-            // $product->icon = $request->input('icon');
-            // $product->favicon = $request->input('favicon');
-            // $product->is_active = $request->input('is_active');
-            // $product->deleted = $request->input('deleted');
-            // $product->created_at = $request->input('created_at');
-            // $product->created_by = $request->input('created_by');
-            // $product->updated_at = $request->input('updated_at');
-            // $product->updated_by = $request->input('updated_by');
-            // $product->deleted_at = $request->input('deleted_at');
-            // $product->deleted_by = $request->input('deleted_by');
             $product->name = $request->input('name');
             $product->type = $request->input('type');
             $product->rate = $request->input('rate');
@@ -185,8 +208,24 @@ class ProductController extends BaseController {
 
     }
 
-    public function delete($id) {
-        $datadelete = DB::table('product')->where('id', '=', $id)->delete();
+    //public function delete($id) {
+        // $datadelete = DB::table('product')->where('id', '=', $id)->delete();
+        // if ($datadelete == 1) {
+        //     return response()->json(array(
+        //                 'code' => 200,
+        //                 'message' => 'Data deleted'
+        //                     ), 200);
+        // }
+        // if ($datadelete == 0) {
+        //     return response()->json(array(
+        //                 'code' => 404,
+        //                 'message' => 'ID not found or invalid'
+        //                     ), 404);
+        // }
+    //}
+    public function delete(Request $request) {
+        
+        $datadelete = Product::find($request->id)->delete();
         if ($datadelete == 1) {
             return response()->json(array(
                         'code' => 200,
